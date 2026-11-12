@@ -1,0 +1,2 @@
+This is an independent Rust gateway project (not integrated into Magpie).
+Its Cargo.toml declares binary `gateway` at src/main.rs, but this bundle currently has Rust sources flattened at this directory rather than the required src/ layout. Before GitHub Actions can build it, restore its original repository tree or move sources to src/ and add an Android ARM64 CI workflow. Do not treat it as build-ready from this bundle.
