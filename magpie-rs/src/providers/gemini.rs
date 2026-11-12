@@ -90,7 +90,7 @@ fn to_gemini(req: &ChatRequest) -> GeminiRequest {
     }
 }
 
-fn openai_chunk(id: &str, model: &str, delta_text: &str, finish: Option<&str>) -> String {
+pub fn openai_chunk(id: &str, model: &str, delta_text: &str, finish: Option<&str>) -> String {
     let mut delta = serde_json::Map::new();
     if !delta_text.is_empty() {
         delta.insert("content".into(), Value::String(delta_text.to_string()));
