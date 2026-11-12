@@ -3,6 +3,7 @@ use axum::Router;
 use serde::Deserialize;
 use std::sync::Arc;
 
+use crate::providers::gemini::{self, GeminiState};
 use codearts_gateway::{
     account::Pool,
     auth::KeyAuth,
@@ -30,6 +31,14 @@ pub struct Config {
     pub gateway_key: String,
     #[serde(default = "default_codearts_gateway")]
     pub codearts_gateway: String,
+    #[serde(default)]
+    pub gemini_api_key: String,
+    #[serde(default = "default_gemini_base")]
+    pub gemini_base_url: String,
+}
+
+fn default_gemini_base() -> String {
+    gemini::GEMINI_PROD.to_string()
 }
 
 fn default_listen() -> String {
@@ -93,7 +102,14 @@ pub fn build_router(cfg: &Config) -> Result<Router> {
     });
 
     let codearts = v1_router(state);
+    let gemini_state = Arc::new(GeminiState {
+        api_key: cfg.gemini_api_key.clone(),
+        base_url: cfg.gemini_base_url.clone(),
+        http: reqwest::Client::new(),
+    });
+    let gemini = gemini::router(gemini_state);
     Ok(Router::new()
         .route("/healthz", axum::routing::get(|| async { "ok" }))
-        .nest("/codearts", codearts))
+        .nest("/codearts", codearts)
+        .nest("/gemini", gemini))
 }

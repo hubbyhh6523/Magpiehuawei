@@ -1,5 +1,6 @@
 use axum::{routing::post, Json, Router};
 use magpie_rs::gateway_app::{build_router, Config};
+use magpie_rs::providers::gemini;
 
 async fn spawn_mock_upstream() -> String {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -34,6 +35,8 @@ async fn sse_end_to_end_through_magpie() {
         codearts_sk: "test-sk".into(),
         gateway_key: "test-key".into(),
         codearts_gateway: upstream,
+        gemini_api_key: "test-gemini-key".into(),
+        gemini_base_url: gemini::GEMINI_PROD.into(),
     };
     let app = build_router(&cfg).unwrap();
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
