@@ -58,6 +58,18 @@ pub async fn handle_chat(
 mod tests {
     use super::*;
 
+    #[test]
+    fn chat_request_serializes() {
+        let req = ChatRequest {
+            model: "test-model".into(),
+            messages: vec![serde_json::json!({"role": "user", "content": "hi"})],
+            stream: true,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("test-model"));
+        assert!(json.contains("hi"));
+    }
+
     #[tokio::test]
     async fn end_to_end_moonshot_streaming_passthrough() {
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
