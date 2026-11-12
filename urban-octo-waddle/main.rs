@@ -1,23 +1,5 @@
-mod account;
-mod admin;
-mod auth;
-mod circuit;
-mod config;
-mod crypto;
-mod error;
-mod gateway;
-mod logs;
-mod openai;
-mod persist;
-mod router;
-mod routes;
-mod session;
-mod sse_tap;
-mod statics;
-mod store;
-mod upstream;
-mod usage;
 
+use codearts_gateway::*;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -27,16 +9,6 @@ use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::compression::CompressionLayer;
 use tracing_subscriber::EnvFilter;
 
-use crate::account::Pool;
-use crate::auth::KeyAuth;
-use crate::config::GatewayConfig;
-use crate::crypto::Encryptor;
-use crate::gateway::Gateway;
-use crate::logs::RequestLog;
-use crate::router::ModelRouter;
-use crate::store::JsonFileStore;
-use crate::upstream::{CodeArtsClient, CODEARTS_GATEWAY_PROD};
-use crate::usage::UsageStore;
 
 /// CodeArts OpenAI-compatible multi-account gateway (Rust rewrite).
 #[derive(Parser, Debug)]
@@ -166,7 +138,7 @@ async fn main() -> anyhow::Result<()> {
 
     let mut cfg = GatewayConfig::default();
     // 授权登录配置：参数齐备时启用，缺省维持未配置行为。
-    cfg.oauth = crate::config::OauthConfig {
+    cfg.oauth = config::OauthConfig {
         client_id: cli.oauth_client_id.clone(),
         client_secret: cli.oauth_client_secret.clone(),
         authorize_url: cli.oauth_authorize_url.clone(),
@@ -198,21 +170,21 @@ async fn main() -> anyhow::Result<()> {
         ka.mark_master(&cli.gw_key);
         // Ensure the master key still works even if not in the file.
         if !ka.authenticate(&cli.gw_key) {
-            ka.upsert(crate::auth::ApiKey {
+            ka.upsert(auth::ApiKey {
                 name: "master".to_string(),
-                key_hash: crate::auth::hash_key_slow(&cli.gw_key),
-                fingerprint: crate::auth::fingerprint_key(&cli.secret, &cli.gw_key),
-                hint: crate::auth::mask_key(&cli.gw_key),
+                key_hash: auth::hash_key_slow(&cli.gw_key),
+                fingerprint: auth::fingerprint_key(&cli.secret, &cli.gw_key),
+                hint: auth::mask_key(&cli.gw_key),
                 created_at: Some(chrono::Utc::now()),
                 expires_at: None,
                 token_quota: 0,
                 tokens_used: 0,
-                quota_period: crate::auth::QuotaPeriod::None,
+                quota_period: auth::QuotaPeriod::None,
                 quota_period_start: None,
                 tokens_used_in_period: 0,
                 model_allowlist: Vec::new(),
                 enabled: true,
-                role: crate::auth::KeyRole::Admin,
+                role: auth::KeyRole::Admin,
                 is_master: true,
                 legacy_hash: false,
             });

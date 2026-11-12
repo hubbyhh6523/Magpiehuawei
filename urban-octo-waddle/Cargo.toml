@@ -5,9 +5,12 @@ edition = "2021"
 description = "CodeArts OpenAI-compatible multi-account gateway (Rust rewrite)"
 license = "MIT"
 
+[lib]
+path = "lib.rs"
+
 [[bin]]
 name = "gateway"
-path = "src/main.rs"
+path = "main.rs"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
