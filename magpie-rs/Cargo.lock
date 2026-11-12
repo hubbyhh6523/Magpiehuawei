@@ -1356,8 +1356,10 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "axum",
+ "bytes",
  "codearts-gateway",
  "config",
+ "futures-util",
  "prost 0.13.5",
  "reqwest",
  "serde",
