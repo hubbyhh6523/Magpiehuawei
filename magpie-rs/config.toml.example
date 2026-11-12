@@ -1,0 +1,25 @@
+# magpie-rs configuration example
+# Copy to config.toml and fill in your values, or use environment variables
+# with the MAGPIE_RS_ prefix (e.g. MAGPIE_RS_LISTEN, MAGPIE_RS_CODEARTS_AK).
+
+listen = "127.0.0.1:8080"
+
+# CodeArts gateway credentials
+codearts_ak = ""
+codearts_sk = ""
+codearts_gateway = "https://codearts-gateway.cn-north-4.myhuaweicloud.com"
+
+# Gateway API key (used for /codearts routes)
+gateway_key = ""
+
+# Gemini Provider (API Key)
+gemini_api_key = ""
+gemini_base_url = "https://generativelanguage.googleapis.com"
+
+# Claude Provider (API Key)
+claude_api_key = ""
+claude_base_url = "https://api.anthropic.com"
+
+# OpenAI/Codex Provider (API Key)
+openai_api_key = ""
+openai_base_url = "https://api.openai.com"
