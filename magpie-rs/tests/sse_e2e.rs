@@ -1,6 +1,13 @@
 use axum::{routing::post, Json, Router};
 use magpie_rs::gateway_app::{build_router, Config};
+use magpie_rs::providers::claude;
+use magpie_rs::providers::deepseek;
 use magpie_rs::providers::gemini;
+use magpie_rs::providers::glm;
+use magpie_rs::providers::llama;
+use magpie_rs::providers::moonshot;
+use magpie_rs::providers::openai;
+use magpie_rs::providers::qwen;
 
 async fn spawn_mock_upstream() -> String {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -34,9 +41,29 @@ async fn sse_end_to_end_through_magpie() {
         codearts_ak: "test-ak".into(),
         codearts_sk: "test-sk".into(),
         gateway_key: "test-key".into(),
+        gateway_keys: vec![],
         codearts_gateway: upstream,
         gemini_api_key: "test-gemini-key".into(),
         gemini_base_url: gemini::GEMINI_PROD.into(),
+        claude_api_key: String::new(),
+        claude_base_url: claude::CLAUDE_PROD.into(),
+        openai_api_key: String::new(),
+        openai_base_url: openai::OPENAI_PROD.into(),
+        deepseek_api_key: String::new(),
+        deepseek_base_url: deepseek::DEEPSEEK_PROD.into(),
+        qwen_api_key: String::new(),
+        qwen_base_url: qwen::QWEN_PROD.into(),
+        llama_api_key: String::new(),
+        llama_base_url: llama::LLAMA_PROD.into(),
+        moonshot_api_key: String::new(),
+        moonshot_base_url: moonshot::MOONSHOT_PROD.into(),
+        glm_api_key: String::new(),
+        glm_base_url: glm::GLM_PROD.into(),
+        rate_limit_rpm: 60,
+        audit_log_path: "audit.jsonl".to_string(),
+        accounts_file: "accounts_admin.json".to_string(),
+        routes_file: "routes.json".to_string(),
+        audit_file: "audit_test.jsonl".to_string(),
     };
     let app = build_router(&cfg).unwrap();
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();

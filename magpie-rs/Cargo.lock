@@ -1371,6 +1371,7 @@ dependencies = [
  "tonic 0.13.1",
  "tonic-prost",
  "tonic-prost-build",
+ "tower",
  "tracing",
  "tracing-subscriber",
 ]

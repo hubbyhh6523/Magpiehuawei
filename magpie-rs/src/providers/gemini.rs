@@ -116,7 +116,7 @@ pub fn router(state: Arc<GeminiState>) -> Router {
         .with_state(state)
 }
 
-async fn handle_chat(
+pub async fn handle_chat(
     State(state): State<Arc<GeminiState>>,
     Json(req): Json<ChatRequest>,
 ) -> Result<axum::response::Response, axum::http::StatusCode> {
@@ -208,4 +208,43 @@ fn uuid_like() -> String {
         .map(|d| d.subsec_nanos())
         .unwrap_or(0);
     format!("{:x}", n)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn converts_openai_messages_to_gemini() {
+        let req = ChatRequest {
+            model: "gemini-2.5-flash".into(),
+            messages: vec![
+                Message {
+                    role: "system".into(),
+                    content: serde_json::json!("be nice"),
+                },
+                Message {
+                    role: "user".into(),
+                    content: serde_json::json!("hi"),
+                },
+                Message {
+                    role: "assistant".into(),
+                    content: serde_json::json!("hello"),
+                },
+            ],
+            stream: true,
+        };
+        let r = serde_json::to_value(to_gemini(&req)).unwrap();
+        assert_eq!(r["system_instruction"]["parts"][0]["text"], "be nice");
+        assert_eq!(r["contents"].as_array().unwrap().len(), 2);
+        assert_eq!(r["contents"][0]["role"], "user");
+        assert_eq!(r["contents"][1]["role"], "model");
+    }
+
+    #[test]
+    fn openai_chunk_format() {
+        let chunk = openai_chunk("id1", "gemini-2.5-flash", "hello", None);
+        assert!(chunk.contains("chat.completion.chunk"));
+        assert!(chunk.contains("hello"));
+    }
 }

@@ -1,4 +1,11 @@
+pub mod claude;
 pub mod code_assist;
 pub mod codeassist_chat;
+pub mod deepseek;
 pub mod gemini;
+pub mod glm;
 pub mod google_auth;
+pub mod llama;
+pub mod moonshot;
+pub mod openai;
+pub mod qwen;

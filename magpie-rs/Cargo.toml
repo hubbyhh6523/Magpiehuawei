@@ -27,4 +27,5 @@ bytes = "1"
 tonic-prost-build = "0.14"
 
 [dev-dependencies]
+tower = "0.5"
 futures-util = "0.3"

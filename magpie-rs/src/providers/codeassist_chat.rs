@@ -146,8 +146,30 @@ fn nanos() -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::super::google_auth::GOOGLE_AUTHORIZE_URL;
     use super::*;
+
+    #[test]
+    fn to_gemini_request_converts() {
+        let req = ChatRequest {
+            model: "gemini-2.5-flash".into(),
+            messages: vec![
+                Message {
+                    role: "system".into(),
+                    content: serde_json::json!("be nice"),
+                },
+                Message {
+                    role: "user".into(),
+                    content: serde_json::json!("hi"),
+                },
+            ],
+            stream: true,
+        };
+        let r = to_gemini_request(&req);
+        assert_eq!(r["systemInstruction"]["parts"][0]["text"], "be nice");
+        assert_eq!(r["contents"].as_array().unwrap().len(), 1);
+    }
+
+    use super::super::google_auth::GOOGLE_AUTHORIZE_URL;
 
     #[tokio::test]
     async fn end_to_end_openai_sse_through_codeassist() {
