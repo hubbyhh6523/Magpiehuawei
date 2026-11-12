@@ -1,0 +1,23 @@
+name: magpie-rs CI
+on:
+  push:
+    paths: ['magpie-rs/**', '.github/workflows/magpie-rs-ci.yml']
+  pull_request:
+    paths: ['magpie-rs/**', '.github/workflows/magpie-rs-ci.yml']
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { components: clippy, rustfmt }
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+        working-directory: magpie-rs
+      - run: cargo clippy --all-targets -- -D warnings
+        working-directory: magpie-rs
+      - run: cargo test --all
+        working-directory: magpie-rs
+      - run: cargo build --release
+        working-directory: magpie-rs

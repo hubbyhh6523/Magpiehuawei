@@ -1,0 +1,27 @@
+syntax = "proto3";
+package magpie.v1;
+
+// AcpBridge service: exposed by the Python acp-bridge process; consumed by
+// the Rust gateway as an internal upstream provider.
+service AcpBridge {
+  rpc Initialize(InitializeRequest) returns (InitializeResponse);
+  rpc NewSession(NewSessionRequest) returns (NewSessionResponse);
+  rpc Prompt(PromptRequest) returns (stream PromptEvent);
+  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+}
+
+message InitializeRequest {}
+message InitializeResponse { string agent_name = 1; string version = 2; }
+message NewSessionRequest { string cwd = 1; }
+message NewSessionResponse { string session_id = 1; }
+message PromptRequest { string session_id = 1; string prompt = 2; }
+message PromptEvent {
+  oneof event {
+    string agent_message_chunk = 1;
+    string usage_update = 2;
+    string state_update = 3;
+    string done = 4;
+  }
+}
+message CloseSessionRequest { string session_id = 1; }
+message CloseSessionResponse {}
